@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AlgoVest — AI Stock Analysis</title>
+  <meta property="og:title"       content="AlgoVest — Your AI Research Team"/>
+  <meta property="og:description" content="12 AI analysts. Any Nifty stock. BUY / HOLD / SELL in minutes. Free to start."/>
+  <meta property="og:image"       content="https://algovest.online/icon.png"/>
+  <meta property="og:url"         content="https://algovest.online/sales-deck.html"/>
+  <meta name="twitter:card"       content="summary_large_image"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── tokens ────────────────────────────────── */
+:root{
+  --navy:#0a0e27; --parchment:#f6f5f0; --white:#fff;
+  --accent:#2440ff; --buy:#008060; --hold:#c87a00; --sell:#d62b3a;
+  --dim:#5a6080; --border:#d8d4c5; --ink:#1a2347;
+  --card:#ffffff; --card-dark:#0f1430; --line:#1e2540;
+}
+
+/* ── reset ─────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'SF Pro Text','SF Pro Icons','Helvetica Neue',Helvetica,Arial,sans-serif;background:#000}
+
+/* ── slide container ────────────────────────── */
+#deck{
+  width:100%; height:100%;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ── slides wrapper (horizontal strip) ──────── */
+#slides{
+  display:flex;
+  width:900%;   /* 9 slides */
+  height:100%;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── individual slide ────────────────────────── */
+.slide{
+  width:11.111%; /* 100/9 */
+  height:100%;
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+
+.dark  {background:var(--navy);      color:#fff}
+.light {background:var(--parchment); color:var(--navy)}
+
+/* ── accent bar ──────────────────────────────── */
+.bar{position:absolute;left:0;top:0;bottom:0;width:6px}
+.bar-blue {background:var(--accent)}
+.bar-red  {background:var(--sell)}
+.bar-green{background:var(--buy)}
+
+/* ── content area ────────────────────────────── */
+.wrap{
+  padding:clamp(20px,4vw,56px) clamp(18px,5vw,72px) clamp(16px,3vw,40px) clamp(24px,6vw,80px);
+  flex:1;min-height:0;
+  display:flex;flex-direction:column;
+  justify-content:center;
+  gap:clamp(6px,1.2vh,14px);
+}
+
+/* ── typography ──────────────────────────────── */
+.label{font-size:clamp(.9rem,1.8vw,.95rem);color:var(--dim);font-weight:400}
+.title{font-size:clamp(2rem,5.5vw,3.8rem);font-weight:800;line-height:1.05;font-family:'Fraunces',Georgia,serif;letter-spacing:-.025em}
+.h2   {font-size:clamp(1.4rem,3vw,2rem);  font-weight:700;line-height:1.2;font-family:'Fraunces',Georgia,serif;letter-spacing:-.02em}
+.body {font-size:clamp(1rem,2vw,1.15rem);line-height:1.65}
+.small{font-size:clamp(.9rem,1.6vw,.95rem);line-height:1.5}
+.tiny {font-size:clamp(.82rem,1.3vw,.85rem)}
+.italic{font-style:italic}
+.accent{color:var(--accent)}
+.muted{color:var(--dim)}
+.white{color:#fff}
+.buy-c{color:var(--buy)}
+.hold-c{color:var(--hold)}
+.sell-c{color:var(--sell)}
+.ink{color:var(--ink)}
+
+hr.rule{border:none;border-top:2px solid var(--border);width:100%}
+hr.rule-dark{border:none;border-top:1px solid var(--line);width:100%}
+
+/* ── badge ───────────────────────────────────── */
+.badge{display:inline-block;padding:.3em 1em;border-radius:4px;font-weight:700;
+  font-size:clamp(.88rem,1.8vw,.95rem);color:#fff}
+.b-buy {background:var(--buy)}
+.b-hold{background:var(--hold)}
+
+/* ── pills (slide 1) ─────────────────────────── */
+.pills{display:flex;gap:.5em;flex-wrap:wrap;margin-top:.3em}
+.pill{padding:.35em 1em;border-radius:5px;font-weight:700;
+  font-size:clamp(.88rem,1.6vw,.95rem);color:#fff}
+.p-buy {background:var(--buy)}
+.p-hold{background:var(--hold)}
+.p-sell{background:var(--sell)}
+.s1-url{font-size:clamp(.85rem,1.4vw,.9rem);color:rgba(255,255,255,.55);margin-top:auto}
+
+/* ── 2-col grid ──────────────────────────────── */
+.grid2{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(8px,2vw,20px);
+  flex:1;min-height:0;
+}
+.col{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:clamp(10px,2vw,18px);display:flex;flex-direction:column;gap:4px;
+  overflow:hidden;
+}
+.col-head{
+  font-size:clamp(.88rem,1.6vw,.95rem);font-weight:700;text-align:center;
+  padding-bottom:.4em;border-bottom:1px solid var(--border);margin-bottom:.3em;
+}
+.row-item{font-size:clamp(.84rem,1.5vw,.9rem);padding:clamp(3px,.5vh,5px) 0;display:flex;gap:.5em;align-items:center}
+.good{color:var(--buy)}.bad{color:var(--sell)}
+
+/* ── stat boxes (slide 4) ────────────────────── */
+.stat-row{display:flex;gap:clamp(8px,2vw,16px)}
+.stat-box{
+  flex:1;background:var(--card-dark);border:1px solid var(--accent);border-radius:7px;
+  padding:clamp(12px,2vh,20px) clamp(8px,2vw,14px);text-align:center
+}
+.stat-val{font-size:clamp(1.4rem,4vw,2.4rem);font-weight:800;color:#fff;font-family:'JetBrains Mono','Courier New',monospace}
+.stat-lbl{font-size:clamp(.8rem,1.3vw,.85rem);color:#ccc;margin-top:.25em;line-height:1.3}
+
+/* ── agent cards (slide 5) ───────────────────── */
+.agents{display:grid;grid-template-columns:1fr 1fr;gap:clamp(5px,1vw,9px);flex:1;min-height:0}
+.agent{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:clamp(6px,1.2vh,10px) clamp(8px,1.5vw,12px)}
+.a-name{font-size:clamp(.85rem,1.3vw,.9rem);font-weight:700;color:var(--accent);margin-bottom:2px}
+.a-desc{font-size:clamp(.78rem,1.1vw,.82rem);color:var(--ink)}
+
+/* ── verdict pills row (slides 6-7) ──────────── */
+.verdicts{display:flex;flex-wrap:wrap;gap:clamp(4px,.8vw,6px)}
+.v{border:1px solid var(--border);border-radius:4px;padding:clamp(3px,.5vh,5px) clamp(6px,1vw,9px);text-align:center;min-width:clamp(56px,8vw,74px)}
+.v-lbl{font-size:clamp(.75rem,1vw,.78rem);color:var(--dim)}
+.v-val{font-size:clamp(.82rem,1.1vw,.82rem);font-weight:700}
+.vb{color:var(--accent)}.vn{color:var(--hold)}.vs{color:var(--sell)}.vg{color:var(--buy)}
+
+/* ── bullet rows (slides 6-7) ────────────────── */
+.bullets{list-style:none;display:flex;flex-direction:column;gap:clamp(3px,.5vh,5px)}
+.bul{
+  display:flex;gap:clamp(6px,1vw,10px);align-items:flex-start;
+  background:var(--card);border:1px solid var(--border);border-radius:4px;
+  padding:clamp(5px,.8vh,7px) clamp(8px,1.5vw,10px);
+  font-size:clamp(.84rem,1.3vw,.85rem)
+}
+.bl{font-weight:700;min-width:clamp(68px,9vw,90px);flex-shrink:0}
+.bt{color:var(--ink)}
+
+/* ── pricing (slide 8) ───────────────────────── */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,2vw,20px);flex:1;min-height:0}
+.plan{border-radius:8px;padding:clamp(12px,2vh,20px) clamp(12px,2.5vw,22px);display:flex;flex-direction:column;gap:clamp(4px,.6vh,6px)}
+.plan-free{background:var(--card);border:1px solid var(--border)}
+.plan-premium{background:var(--navy)}
+.plan-name{font-size:clamp(1.05rem,2vw,1.3rem);font-weight:700;text-align:center}
+.plan-price{font-size:clamp(1.2rem,2.8vw,1.9rem);font-weight:800;text-align:center;font-family:'JetBrains Mono','Courier New',monospace}
+.plan-sub{font-size:clamp(.8rem,1.2vw,.85rem);color:var(--dim);text-align:center;font-style:italic}
+.plan-feat{font-size:clamp(.84rem,1.3vw,.88rem);display:flex;gap:.5em;align-items:center;padding:clamp(2px,.4vh,4px) 0}
+
+/* ── CTA steps (slide 9) ─────────────────────── */
+.steps{display:flex;gap:clamp(8px,2vw,16px)}
+.step{flex:1;background:var(--card-dark);border:1px solid var(--accent);border-radius:7px;padding:clamp(12px,2.5vh,18px) clamp(10px,2vw,14px);text-align:center}
+.step-num{font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;color:#fff}
+.step-t{font-size:clamp(.9rem,1.4vw,.95rem);font-weight:700;color:#fff;margin:.25em 0 .15em}
+.step-s{font-size:clamp(.82rem,1.2vw,.85rem);color:rgba(255,255,255,.65)}
+.cta-url{font-size:clamp(1.4rem,4vw,2.1rem);font-weight:800;color:#fff;text-align:center;margin-top:.2em}
+
+/* ── nav bar ─────────────────────────────────── */
+#nav{
+  position:fixed;bottom:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:10px 16px;
+  background:rgba(10,14,39,.85);backdrop-filter:blur(8px);
+  z-index:100;
+}
+#nav button{
+  background:none;border:1.5px solid rgba(255,255,255,.25);color:#fff;
+  border-radius:50%;width:36px;height:36px;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .2s,background .2s;
+  flex-shrink:0;
+}
+#nav button:hover{border-color:var(--accent);background:rgba(36,64,255,.15)}
+#nav button:disabled{opacity:.3;cursor:default}
+#counter{color:#fff;font-size:.85rem;font-weight:600;min-width:44px;text-align:center}
+.dot-row{display:flex;gap:6px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .25s}
+.dot.on{background:var(--accent);width:18px;border-radius:3px}
+
+/* ── contrast: dim text on dark backgrounds ───── */
+.dark .label{color:rgba(255,255,255,.7)}
+.dark .muted{color:rgba(255,255,255,.65)}
+.plan-premium .plan-sub{color:rgba(255,255,255,.65)}
+
+/* ── mobile: stack two-col grids ──────────────── */
+@media(max-width:540px){
+  .grid2,.agents,.plans,.stat-row,.steps{
+    grid-template-columns:1fr !important;
+    flex-direction:column;
+  }
+  /* hide lower-priority items to keep slides clean */
+  .row-item:nth-child(n+5){display:none}
+  .agent:nth-child(n+7){display:none}
+  .v:nth-child(n+6){display:none}
+}
+@media(max-width:380px){
+  .agent:nth-child(n+5){display:none}
+  .bul .bl{min-width:60px}
+}
+</style>
+</head>
+<body>
+
+<div id="deck">
+  <div id="slides">
+
+    <!-- S1 TITLE ─────────────────────────────────────── -->
+    <div class="slide dark">
+      <div class="bar bar-blue"></div>
+      <div class="wrap">
+        <div class="label">AI-Powered Stock Analysis</div>
+        <div class="title white">AlgoVest</div>
+        <div class="body white" style="font-weight:600">Your AI Research Team for Indian Stock Markets</div>
+        <div class="small" style="color:#aaa;font-style:italic">12 AI analysts · Any Nifty stock · BUY / HOLD / SELL in minutes</div>
+        <div class="pills">
+          <div class="pill p-buy">● BUY</div>
+          <div class="pill p-hold">◑ HOLD</div>
+          <div class="pill p-sell">● SELL</div>
+        </div>
+        <div class="s1-url">algovest.online</div>
+      </div>
+    </div>
+
+    <!-- S2 PROBLEM ───────────────────────────────────── -->
+    <div class="slide dark">
+      <div class="bar bar-red"></div>
+      <div class="wrap">
+        <div class="title white" style="font-size:clamp(1.4rem,5.5vw,3.6rem)">9 in 10 retail traders lose money.</div>
+        <div class="small muted italic">— SEBI F&amp;O Participant Study</div>
+        <div class="body white">
+          Not because they're bad at math.<br/>
+          Because they don't have the same information as the people on the other side of the trade.
+        </div>
+        <div class="body white" style="font-weight:600">That's the problem AlgoVest solves.</div>
+      </div>
+    </div>
+
+    <!-- S3 UNFAIR FIGHT ──────────────────────────────── -->
+    <div class="slide light">
+      <div class="wrap" style="justify-content:flex-start;padding-top:clamp(16px,3vh,36px)">
+        <div class="h2">The Unfair Fight</div>
+        <hr class="rule"/>
+        <div class="grid2" style="flex:1;min-height:0">
+          <div class="col">
+            <div class="col-head ink">Institutional Investor</div>
+            <div class="row-item good">✓ 12-person research team</div>
+            <div class="row-item good">✓ Real-time Bloomberg data</div>
+            <div class="row-item good">✓ Quantitative risk models</div>
+            <div class="row-item good">✓ Bull &amp; bear debate every trade</div>
+            <div class="row-item good">✓ Dedicated risk managers</div>
+            <div class="row-item good">✓ Portfolio manager sign-off</div>
+          </div>
+          <div class="col">
+            <div class="col-head ink">Retail Investor</div>
+            <div class="row-item bad">✗ Google + WhatsApp tips</div>
+            <div class="row-item bad">✗ Delayed news articles</div>
+            <div class="row-item bad">✗ Gut feel</div>
+            <div class="row-item bad">✗ One opinion (often wrong)</div>
+            <div class="row-item bad">✗ No risk framework</div>
+            <div class="row-item bad">✗ Hope</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 INTRODUCING ───────────────────────────────── -->
+    <div class="slide dark">
+      <div class="bar bar-blue"></div>
+      <div class="wrap">
+        <div class="h2 white">Introducing AlgoVest</div>
+        <hr class="rule-dark"/>
+        <div class="body" style="color:#ccc">
+          AlgoVest runs 12 specialized AI analysts on any Nifty stock and delivers a clear BUY / HOLD / SELL verdict — with every reason behind it.
+        </div>
+        <div class="stat-row">
+          <div class="stat-box"><div class="stat-val">12</div><div class="stat-lbl">Specialized AI Agents</div></div>
+          <div class="stat-box"><div class="stat-val">&lt;5 min</div><div class="stat-lbl">Full Report Generated</div></div>
+          <div class="stat-box"><div class="stat-val">₹17/day</div><div class="stat-lbl">Premium — less than chai</div></div>
+        </div>
+        <div class="tiny muted" style="text-align:center">Covers all Nifty 500 · Free to start · No card required</div>
+      </div>
+    </div>
+
+    <!-- S5 HOW IT WORKS ──────────────────────────────── -->
+    <div class="slide light">
+      <div class="wrap" style="justify-content:flex-start;padding-top:clamp(16px,3vh,36px)">
+        <div class="h2">How It Works</div>
+        <div class="small muted">12 specialized agents — each with a distinct role</div>
+        <hr class="rule"/>
+        <div class="agents" style="flex:1;min-height:0">
+          <div class="agent"><div class="a-name">1. Market Analyst</div><div class="a-desc">Price action, MAs, MACD, RSI, Bollinger Bands</div></div>
+          <div class="agent"><div class="a-name">2. Sentiment Analyst</div><div class="a-desc">Market mood, analyst consensus, positioning</div></div>
+          <div class="agent"><div class="a-name">3. News Analyst</div><div class="a-desc">Real-time news, earnings, macro events</div></div>
+          <div class="agent"><div class="a-name">4. Fundamentals Analyst</div><div class="a-desc">Revenue, P/E, margins, debt, cash flow</div></div>
+          <div class="agent"><div class="a-name">5. Bull Researcher</div><div class="a-desc">Builds the strongest case to BUY</div></div>
+          <div class="agent"><div class="a-name">6. Bear Researcher</div><div class="a-desc">Builds the strongest case to SELL</div></div>
+          <div class="agent"><div class="a-name">7. Research Manager</div><div class="a-desc">Synthesises the bull vs. bear debate</div></div>
+          <div class="agent"><div class="a-name">8. Trader</div><div class="a-desc">Entry price, stop-loss, profit target</div></div>
+          <div class="agent"><div class="a-name">9–11. Risk Managers</div><div class="a-desc">Conservative, neutral &amp; aggressive views</div></div>
+          <div class="agent"><div class="a-name">12. Portfolio Manager</div><div class="a-desc">Final verdict: BUY / HOLD / SELL</div></div>
+        </div>
+        <div class="small buy-c" style="font-weight:700;text-align:right">→ BUY / HOLD / SELL + Full reasoning</div>
+      </div>
+    </div>
+
+    <!-- S6 RELIANCE ──────────────────────────────────── -->
+    <div class="slide light">
+      <div class="wrap" style="justify-content:flex-start;padding-top:clamp(16px,3vh,36px)">
+        <div class="label">Real Report</div>
+        <div class="h2">Reliance Industries · RELIANCE.NS</div>
+        <div style="display:flex;align-items:center;gap:.7em;flex-wrap:wrap">
+          <span class="badge b-buy">● BUY</span>
+        </div>
+        <hr class="rule"/>
+        <div class="verdicts">
+          <div class="v"><div class="v-lbl">Market</div><div class="v-val vb">Bullish</div></div>
+          <div class="v"><div class="v-lbl">Sentiment</div><div class="v-val vb">Bullish</div></div>
+          <div class="v"><div class="v-lbl">News</div><div class="v-val vb">Bullish</div></div>
+          <div class="v"><div class="v-lbl">Fundamentals</div><div class="v-val vn">Neutral</div></div>
+          <div class="v"><div class="v-lbl">Research</div><div class="v-val vn">Neutral</div></div>
+          <div class="v"><div class="v-lbl">Trade</div><div class="v-val vb">Bullish</div></div>
+          <div class="v"><div class="v-lbl">Risk</div><div class="v-val vn">Neutral</div></div>
+          <div class="v"><div class="v-lbl">Final</div><div class="v-val vg">BUY</div></div>
+        </div>
+        <ul class="bullets">
+          <li class="bul"><span class="bl" style="color:var(--navy)">Trader:</span><span class="bt">Buy ₹1,435 · Target ₹1,697 (18% up) · Stop ₹1,375 · RR 4:1</span></li>
+          <li class="bul"><span class="bl" style="color:var(--accent)">Jio IPO:</span><span class="bt">DRHP May 2026 · $80–120B valuation · 524M subscribers</span></li>
+          <li class="bul"><span class="bl" style="color:var(--ink)">Fundamentals:</span><span class="bt">Revenue ₹11.76L Cr (+9.8%) · EBITDA ₹2.08L Cr (+13.4%)</span></li>
+          <li class="bul"><span class="bl" style="color:var(--hold)">Bear risk:</span><span class="bt">O2C margins at 7.9% trough · IPO delay → ₹1,200–1,300</span></li>
+          <li class="bul"><span class="bl" style="color:var(--buy)">Decision:</span><span class="bt">BUY — 6–12 month upside to ₹1,900</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- S7 HDFC BANK ──────────────────────────────────── -->
+    <div class="slide light">
+      <div class="wrap" style="justify-content:flex-start;padding-top:clamp(16px,3vh,36px)">
+        <div class="label">Real Report</div>
+        <div class="h2">HDFC Bank · HDFCBANK.NS</div>
+        <div style="display:flex;align-items:center;gap:.7em;flex-wrap:wrap">
+          <span class="badge b-hold">◑ HOLD</span>
+          <span class="tiny muted italic">The nuance that saves money.</span>
+        </div>
+        <hr class="rule"/>
+        <div class="verdicts">
+          <div class="v"><div class="v-lbl">Market</div><div class="v-val vn">Neutral</div></div>
+          <div class="v"><div class="v-lbl">Sentiment</div><div class="v-val vb">Bullish</div></div>
+          <div class="v"><div class="v-lbl">News</div><div class="v-val vb">Bullish</div></div>
+          <div class="v"><div class="v-lbl">Fundamentals</div><div class="v-val vb">Bullish</div></div>
+          <div class="v"><div class="v-lbl">Research</div><div class="v-val vs">Bearish</div></div>
+          <div class="v"><div class="v-lbl">Trade</div><div class="v-val vn">Neutral</div></div>
+          <div class="v"><div class="v-lbl">Risk</div><div class="v-val vn">Neutral</div></div>
+          <div class="v"><div class="v-lbl">Final</div><div class="v-val vn">HOLD</div></div>
+        </div>
+        <ul class="bullets">
+          <li class="bul"><span class="bl" style="color:var(--accent)">Governance:</span><span class="bt">Clean chit on CEO reappointment — removes key overhang</span></li>
+          <li class="bul"><span class="bl" style="color:var(--accent)">Valuations:</span><span class="bt">Forward P/E 12.4x vs historical 20–25x — compelling on paper</span></li>
+          <li class="bul"><span class="bl" style="color:var(--sell)">But charts:</span><span class="bt">Death cross: 50-DMA ₹138 below 200-DMA · Stock 15% below 200-DMA</span></li>
+          <li class="bul"><span class="bl" style="color:var(--hold)">Research:</span><span class="bt">"Last similar gap took 200+ days to recover"</span></li>
+          <li class="bul"><span class="bl" style="color:var(--hold)">Decision:</span><span class="bt">HOLD ₹796 · Add above ₹816 · Stop ₹760</span></li>
+        </ul>
+        <div class="tiny muted italic">A tip would've said "buy — cheap valuations." AlgoVest said wait.</div>
+      </div>
+    </div>
+
+    <!-- S8 PRICING ───────────────────────────────────── -->
+    <div class="slide light">
+      <div class="wrap" style="justify-content:flex-start;padding-top:clamp(16px,3vh,36px)">
+        <div class="h2">Simple, Transparent Pricing</div>
+        <hr class="rule"/>
+        <div class="plans" style="flex:1;min-height:0">
+          <div class="plan plan-free">
+            <div class="plan-name ink">Free</div>
+            <div class="plan-price buy-c">₹0 / month</div>
+            <div class="plan-sub">No card required</div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:.3em 0"/>
+            <div class="plan-feat">✓ 5 reports per day</div>
+            <div class="plan-feat">✓ All Nifty 500 stocks</div>
+            <div class="plan-feat">✓ Full BUY / HOLD / SELL verdict</div>
+            <div class="plan-feat">✓ Complete agent reasoning</div>
+          </div>
+          <div class="plan plan-premium">
+            <div class="plan-name white">Premium</div>
+            <div class="plan-price white">₹499 / month</div>
+            <div class="plan-sub">or ₹3,999/year — save 33%</div>
+            <hr style="border:none;border-top:1px solid var(--line);margin:.3em 0"/>
+            <div class="plan-feat white">✓ Unlimited reports</div>
+            <div class="plan-feat white">✓ On-demand stock requests</div>
+            <div class="plan-feat white">✓ Priority report generation</div>
+            <div class="plan-feat white">✓ Portfolio watchlist</div>
+            <div class="plan-feat white">✓ WhatsApp alerts (coming soon)</div>
+          </div>
+        </div>
+        <div class="small muted italic" style="text-align:center">"One bad trade costs more than a year of AlgoVest."</div>
+      </div>
+    </div>
+
+    <!-- S9 CTA ───────────────────────────────────────── -->
+    <div class="slide dark">
+      <div class="bar bar-green"></div>
+      <div class="wrap">
+        <div class="title white" style="font-size:clamp(1.4rem,5vw,2.8rem)">Start Today — It's Free</div>
+        <div class="small muted italic">No card needed. 5 reports a day. Takes 2 minutes.</div>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-t">Go to algovest.online</div><div class="step-s">Sign up free — no card</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-t">Pick any stock</div><div class="step-s">Type ticker or name</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-t">Get your report</div><div class="step-s">BUY / HOLD / SELL in &lt;5 min</div></div>
+        </div>
+        <div class="cta-url">algovest.online</div>
+      </div>
+    </div>
+
+  </div><!-- #slides -->
+</div><!-- #deck -->
+
+<!-- nav bar -->
+<div id="nav">
+  <button id="prev" aria-label="Previous">&#8592;</button>
+  <div class="dot-row" id="dots"></div>
+  <div id="counter">1 / 9</div>
+  <button id="next" aria-label="Next">&#8594;</button>
+</div>
+
+<script>
+const TOTAL = 9;
+let cur = 0;
+
+const slidesEl = document.getElementById('slides');
+const counter  = document.getElementById('counter');
+const prevBtn  = document.getElementById('prev');
+const nextBtn  = document.getElementById('next');
+const dotsEl   = document.getElementById('dots');
+
+/* build dots */
+for(let i=0;i<TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' on':'');
+  d.addEventListener('click',()=>go(i));
+  dotsEl.appendChild(d);
+}
+
+function go(n){
+  cur=Math.max(0,Math.min(TOTAL-1,n));
+  slidesEl.style.transform=`translateX(${-cur*(100/TOTAL)}%)`;
+  counter.textContent=`${cur+1} / ${TOTAL}`;
+  prevBtn.disabled=cur===0;
+  nextBtn.disabled=cur===TOTAL-1;
+  dotsEl.querySelectorAll('.dot').forEach((d,i)=>{
+    d.className='dot'+(i===cur?' on':'');
+  });
+}
+
+prevBtn.addEventListener('click',()=>go(cur-1));
+nextBtn.addEventListener('click',()=>go(cur+1));
+go(0);
+
+/* keyboard */
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') go(cur+1);
+  if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   go(cur-1);
+});
+
+/* touch swipe */
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=tx-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>40) dx>0?go(cur+1):go(cur-1);
+},{passive:true});
+</script>
+</body>
+</html>
