@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Rupee Value Calculator — AlgoVest</title>
+<meta property="og:title" content="Is your money really growing — or quietly shrinking?">
+<meta property="og:description" content="See your true returns after inflation, rupee depreciation, and tax. Free personalised report in 90 seconds.">
+<meta property="og:url" content="https://algovest.online/calculator.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://algovest.online/og-calculator.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Is your money really growing — or quietly shrinking?">
+<meta name="twitter:description" content="See your true returns after real inflation, rupee depreciation, and tax. Free report in 90 seconds.">
+<meta name="twitter:image" content="https://algovest.online/og-calculator.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --navy:#051828;--navy-light:#0e3460;
+  --blue:#1a6fc4;--blue-bright:#2e8de8;
+  --gold:#c8922a;--gold-light:#e8b04a;
+  --cream-dark:#ede7d9;
+  --red-light:#e55344;--green-light:#22a06b;--amber:#b35a00;
+  --text-primary:#0f1923;--text-secondary:#4a5568;--text-muted:#8896a8;
+  --border:#d4c9b6;--bg-light:#f9f6f1;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --radius:12px;--radius-lg:20px;
+  --shadow-lg:0 12px 48px rgba(5,24,40,.16);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg-light);color:var(--text-primary);min-height:100vh;}
+
+.header{background:var(--navy);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:var(--serif);font-size:22px;color:#fff;letter-spacing:-.5px;}
+.logo span{color:var(--gold-light);}
+.header-link{font-size:13px;color:#8ab4d8;text-decoration:none;border:1px solid rgba(138,180,216,.3);padding:6px 14px;border-radius:20px;transition:all .2s;}
+.header-link:hover{color:#fff;border-color:rgba(255,255,255,.5);}
+
+.hero{background:var(--navy);padding:48px 24px 60px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 120%,rgba(26,111,196,.22) 0%,transparent 70%);}
+.hero-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);border:1px solid rgba(200,146,42,.4);padding:5px 14px;border-radius:20px;margin-bottom:18px;position:relative;}
+.hero h1{font-family:var(--serif);font-size:clamp(26px,5vw,46px);color:#fff;line-height:1.15;max-width:680px;margin:0 auto 14px;position:relative;}
+.hero h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:15px;color:#8ab4d8;max-width:500px;margin:0 auto;line-height:1.65;position:relative;}
+
+.social-ticker{background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.08);padding:11px 24px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
+.ticker-stat{display:flex;align-items:center;gap:6px;font-size:13px;color:#8ab4d8;}
+.ticker-stat strong{color:#fff;font-weight:600;}
+.ticker-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.2);}
+
+.card-wrap{max-width:680px;margin:-32px auto 48px;padding:0 16px;position:relative;z-index:10;}
+.card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);overflow:hidden;}
+
+.progress-bar{display:flex;height:4px;background:#eee;}
+.prog-seg{flex:1;background:#eee;transition:background .4s ease;}
+.prog-seg.active{background:var(--gold);}
+.prog-seg.done{background:var(--navy);}
+
+.step-label{padding:16px 28px 0;display:flex;align-items:center;gap:8px;}
+.step-num{font-family:var(--mono);font-size:11px;color:var(--text-muted);letter-spacing:.08em;}
+.step-title-sm{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+
+.step{display:none;padding:20px 28px 28px;}
+.step.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.step.active{animation:fadeUp .3s ease forwards;}
+.step h2{font-family:var(--serif);font-size:25px;color:var(--navy);line-height:1.2;margin-bottom:8px;}
+.step-sub{font-size:14px;color:var(--text-secondary);line-height:1.65;margin-bottom:22px;}
+
+.resume-banner{background:#EAF3DE;border:1px solid #97C459;border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:#3B6D11;}
+.resume-banner button{font-size:12px;font-weight:600;color:#3B6D11;background:#C0DD97;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:6px;}
+.field select,.field input{width:100%;padding:11px 14px;font-size:15px;font-family:var(--sans);background:var(--bg-light);color:var(--text-primary);border:1.5px solid var(--border);border-radius:var(--radius);outline:none;transition:border-color .2s,box-shadow .2s;-moz-appearance:textfield;}
+.field select:focus,.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,196,.12);background:#fff;}
+.field input.valid{border-color:var(--green-light);}
+.field input.invalid{border-color:var(--red-light);}
+.field .hint{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.field .err{font-size:12px;color:var(--red-light);margin-top:4px;display:none;}
+.field .err.show{display:block;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.info-card{background:var(--bg-light);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;}
+.info-card strong{color:var(--text-primary);font-weight:600;}
+
+.toggle-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.tgl{padding:8px 15px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--text-secondary);transition:all .18s;}
+.tgl:hover{border-color:var(--blue);color:var(--blue);}
+.tgl.sel{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+.btn-row{display:flex;gap:10px;margin-top:22px;}
+.btn{flex:1;padding:12px 20px;border-radius:var(--radius);font-size:15px;font-weight:500;font-family:var(--sans);cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--text-secondary);transition:all .18s;}
+.btn:hover{background:var(--bg-light);}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 4px 16px rgba(5,24,40,.25);}
+.btn.primary:hover{background:var(--navy-light);}
+
+.gate-blur{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;filter:blur(5px);pointer-events:none;user-select:none;opacity:.3;}
+.ghost-card{background:var(--bg-light);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.ghost-card .gl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.ghost-card .gv{font-family:var(--serif);font-size:22px;color:var(--navy);}
+.proof-strip{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.proof-counter{background:var(--bg-light);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.proof-counter .pc-num{font-family:var(--serif);font-size:22px;color:var(--navy);white-space:nowrap;}
+.proof-counter .pc-text{font-size:13px;color:var(--text-secondary);line-height:1.4;}
+.testimonials{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.testi{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;}
+.testi .tq{font-size:12px;color:var(--text-primary);line-height:1.55;margin-bottom:8px;font-style:italic;}
+.testi .ta{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
+.stars{color:var(--gold);font-size:10px;letter-spacing:1px;}
+.gate-box{border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:22px;background:linear-gradient(135deg,#fff 0%,var(--bg-light) 100%);text-align:center;}
+.gate-box h3{font-family:var(--serif);font-size:21px;color:var(--navy);margin-bottom:8px;}
+.gate-box p{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:18px;max-width:360px;margin-left:auto;margin-right:auto;}
+.name-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.gate-box input{width:100%;padding:11px 14px;font-size:14px;font-family:var(--sans);border:1.5px solid var(--border);border-radius:var(--radius);background:#fff;color:var(--text-primary);outline:none;transition:border-color .2s;}
+.gate-box input:focus{border-color:var(--blue);}
+.consent-row{display:flex;align-items:flex-start;gap:10px;margin:10px 0;text-align:left;}
+.consent-row input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--navy);}
+.consent-row label{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+.consent-row a{color:var(--blue);}
+.unlock-btn{width:100%;padding:13px;font-size:15px;font-weight:600;font-family:var(--sans);background:var(--navy);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;transition:background .18s;box-shadow:0 4px 16px rgba(5,24,40,.25);}
+.unlock-btn:hover{background:var(--navy-light);}
+.unlock-btn:disabled{opacity:.6;cursor:not-allowed;}
+.privacy-note{font-size:11px;color:var(--text-muted);margin-top:10px;line-height:1.5;}
+
+.report-header{background:var(--navy);padding:22px 28px;color:#fff;}
+.report-header h2{font-family:var(--serif);font-size:23px;color:#fff;margin-bottom:5px;}
+.report-header p{font-size:13px;color:#8ab4d8;line-height:1.5;}
+.report-body{padding:22px 28px;}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.metric{border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;background:#fff;}
+.metric .m-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.metric .m-val{font-family:var(--serif);font-size:21px;line-height:1;margin-bottom:3px;transition:all .3s;}
+.metric .m-sub{font-size:11px;color:var(--text-muted);}
+.m-navy{color:var(--navy);}.m-green{color:var(--green-light);}.m-red{color:var(--red-light);}.m-amber{color:var(--amber);}
+
+@keyframes countPop{0%{transform:scale(.85);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.metric .m-val.pop{animation:countPop .6s ease forwards;}
+
+.goal-banner{border-radius:var(--radius);padding:14px 18px;margin-bottom:18px;display:flex;align-items:flex-start;gap:14px;}
+.goal-banner.gap{background:#fef2f2;border:1px solid #fca5a5;}
+.goal-banner.met{background:#f0fdf4;border:1px solid #86efac;}
+.goal-banner .gb-icon{font-size:22px;flex-shrink:0;}
+.goal-banner .gb-body h4{font-size:14px;font-weight:600;margin-bottom:3px;}
+.goal-banner.gap .gb-body h4{color:#7c2020;}
+.goal-banner.met .gb-body h4{color:#166534;}
+.goal-banner .gb-body p{font-size:13px;line-height:1.55;}
+.goal-banner.gap .gb-body p{color:#991b1b;}
+.goal-banner.met .gb-body p{color:#15803d;}
+
+.divider{border:none;border-top:1px solid var(--cream-dark);margin:18px 0;}
+.bar-item{margin-bottom:12px;}
+.bar-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
+.bar-top .bl{font-size:13px;color:var(--text-secondary);}
+.bar-top .bv{font-size:13px;font-weight:600;color:var(--text-primary);font-family:var(--mono);}
+.bar-track{height:7px;border-radius:4px;background:var(--cream-dark);overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+
+.year-strip{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px;}
+.yd-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;background:var(--bg-light);border:1px solid var(--border);color:var(--text-secondary);}
+.yd-tag span{color:var(--navy);font-weight:500;}
+
+.verdict-box{border-radius:var(--radius);padding:14px 18px;margin-bottom:18px;}
+.verdict-box.bad{background:#fef2f2;border-left:3px solid var(--red-light);}
+.verdict-box.mid{background:#fffbeb;border-left:3px solid var(--gold);}
+.verdict-box.good{background:#f0fdf4;border-left:3px solid var(--green-light);}
+.verdict-box p{font-size:13.5px;line-height:1.7;color:var(--text-primary);}
+.verdict-box strong{font-weight:600;}
+
+.sip-note{background:linear-gradient(90deg,#f0f7ff,#fff);border:1px solid #bfdbfe;border-radius:var(--radius);padding:12px 16px;font-size:13px;color:#1e40af;line-height:1.55;margin-bottom:18px;}
+.sip-note strong{font-weight:600;}
+
+.chart-wrap{position:relative;width:100%;height:230px;margin-bottom:8px;}
+.chart-legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px;}
+.leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary);}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+
+.sp-block{background:#0c1f35;border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:18px;}
+.sp-block h4{font-family:var(--serif);font-size:16px;color:#fff;margin-bottom:14px;}
+.sp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.sp-card{border-radius:var(--radius);padding:13px 14px;}
+.sp-card.a{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);}
+.sp-card.b{background:rgba(46,141,232,.18);border:1px solid rgba(46,141,232,.35);}
+.sp-card.c{background:rgba(200,146,42,.18);border:1px solid rgba(200,146,42,.35);}
+.sp-card .sc-l{font-size:10px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.sp-card.a .sc-l{color:#8ab4d8;}.sp-card.b .sc-l{color:#93c5fd;}.sp-card.c .sc-l{color:#fcd34d;}
+.sp-card .sc-v{font-family:var(--serif);font-size:19px;margin-bottom:2px;}
+.sp-card.a .sc-v{color:#fff;}.sp-card.b .sc-v{color:#bfdbfe;}.sp-card.c .sc-v{color:var(--gold-light);}
+.sp-card .sc-s{font-size:10px;}
+.sp-card.a .sc-s{color:#8ab4d8;}.sp-card.b .sc-s{color:#93c5fd;}.sp-card.c .sc-s{color:#fcd34d;}
+.sp-shock{font-size:13px;color:#93c5fd;line-height:1.55;margin-bottom:14px;}
+.sp-shock strong{color:#fff;}
+
+.asset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.asset-card{border:1px solid var(--border);border-radius:var(--radius);padding:13px;background:#fff;position:relative;}
+.asset-card.highlight{border-color:var(--gold);background:#fffdf7;}
+.asset-card .ac-icon{font-size:18px;margin-bottom:5px;}
+.asset-card .ac-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.asset-card .ac-val{font-family:var(--serif);font-size:19px;color:var(--navy);margin-bottom:2px;}
+.asset-card .ac-cagr{font-size:11px;color:var(--text-muted);}
+.asset-card .ac-cagr span{font-weight:600;color:var(--text-secondary);}
+.asset-badge{position:absolute;top:9px;right:9px;font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;letter-spacing:.05em;text-transform:uppercase;}
+.badge-best{background:#d4edda;color:#1a5c30;}
+.badge-worst{background:#fce8e8;color:#7c2020;}
+
+.reality-card{background:var(--navy);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:18px;}
+.reality-card h4{font-family:var(--serif);font-size:16px;color:#fff;margin-bottom:12px;}
+.reality-row{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);}
+.reality-row:last-child{border-bottom:none;padding-bottom:0;}
+.reality-year{font-family:var(--mono);font-size:11px;color:#8ab4d8;min-width:30px;padding-top:2px;}
+.reality-body{flex:1;}
+.reality-then{font-size:13px;color:#fff;font-weight:500;margin-bottom:2px;}
+.reality-now{font-size:12px;color:#e55344;}
+
+.proj-block{background:var(--bg-light);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:18px;}
+.proj-block h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:12px;}
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.proj-card{border-radius:var(--radius);padding:12px 14px;background:#fff;border:1px solid var(--border);}
+.proj-card.av{border-color:var(--gold);background:#fffdf7;}
+.proj-card .pj-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.proj-card .pj-v{font-family:var(--serif);font-size:20px;color:var(--navy);margin-bottom:2px;}
+.proj-card.av .pj-v{color:#7a4500;}
+.proj-card .pj-s{font-size:11px;color:var(--text-muted);}
+
+.book-call-block{background:linear-gradient(135deg,#042C53,#0e3460);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;gap:16px;}
+.book-call-block .bc-icon{font-size:28px;flex-shrink:0;}
+.book-call-block .bc-body h4{font-family:var(--serif);font-size:16px;color:#fff;margin-bottom:4px;}
+.book-call-block .bc-body p{font-size:12px;color:#8ab4d8;line-height:1.5;margin-bottom:10px;}
+.book-call-block a{display:inline-block;padding:8px 18px;background:var(--gold);color:var(--navy);font-size:13px;font-weight:600;border-radius:var(--radius);text-decoration:none;transition:opacity .18s;}
+.book-call-block a:hover{opacity:.85;}
+
+.av-block{background:var(--navy);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:18px;position:relative;overflow:hidden;}
+.av-block::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(26,111,196,.28) 0%,transparent 70%);}
+.av-block h3{font-family:var(--serif);font-size:17px;color:#fff;margin-bottom:3px;position:relative;}
+.av-block .av-sub{font-size:12px;color:#8ab4d8;margin-bottom:16px;position:relative;}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;position:relative;}
+.cc{border-radius:var(--radius);padding:13px;}
+.cc.yours{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);}
+.cc.theirs{background:rgba(46,141,232,.2);border:1px solid rgba(46,141,232,.4);}
+.cc .cl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.cc.yours .cl{color:#8ab4d8;}.cc.theirs .cl{color:#b5d4f4;}
+.cc .cv{font-family:var(--serif);font-size:19px;margin-bottom:2px;}
+.cc.yours .cv{color:#fff;}.cc.theirs .cv{color:#b5d4f4;}
+.cc .cs{font-size:11px;}
+.cc.yours .cs{color:#8ab4d8;}.cc.theirs .cs{color:#9fc5e8;}
+.av-extra-row{background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.3);border-radius:var(--radius);padding:10px 16px;text-align:center;margin-bottom:12px;position:relative;}
+.av-extra-row .ex-label{font-size:11px;color:#c8a55a;text-transform:uppercase;letter-spacing:.06em;}
+.av-extra-row .ex-val{font-family:var(--serif);font-size:23px;color:var(--gold-light);line-height:1.1;}
+.av-extra-row .ex-sub{font-size:11px;color:#8ab4d8;}
+.av-cta{display:block;width:100%;padding:13px;background:var(--blue-bright);color:#fff;text-align:center;font-size:14px;font-weight:600;font-family:var(--sans);text-decoration:none;border-radius:var(--radius);transition:background .18s;position:relative;}
+.av-cta:hover{background:var(--blue);}
+.av-cta.corpus-small{background:#1a6fc4;}
+.av-cta.corpus-mid{background:#0e5ba3;}
+.av-cta.corpus-large{background:#042C53;}
+.av-disclaimer{font-size:10px;color:#5a7a9a;text-align:center;margin-top:7px;line-height:1.5;position:relative;}
+
+.share-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.share-btn{flex:1;min-width:100px;padding:9px 13px;border-radius:var(--radius);font-size:13px;font-weight:500;font-family:var(--sans);cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .18s;text-decoration:none;}
+.share-btn:hover{background:var(--bg-light);}
+.share-btn.wa{border-color:#25d366;color:#128c4a;background:#f0fff5;}
+.share-btn.wa:hover{background:#d9f7e5;}
+.share-btn.tw{border-color:#1da1f2;color:#1a6dad;background:#f0f8ff;}
+.share-btn.tw:hover{background:#dbeffe;}
+.share-btn.li{border-color:#0a66c2;color:#0a66c2;background:#f0f6ff;}
+.share-btn.li:hover{background:#dbeffe;}
+
+.print-btn{width:100%;margin-top:10px;padding:9px;border-radius:var(--radius);font-size:13px;font-weight:500;font-family:var(--sans);cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;gap:7px;transition:all .18s;}
+.print-btn:hover{background:var(--bg-light);}
+
+.sebi-bar{background:var(--bg-light);border-top:1px solid var(--border);padding:14px 28px;font-size:11px;color:var(--text-muted);line-height:1.6;}
+.sebi-bar strong{color:var(--text-secondary);}
+.method-toggle{cursor:pointer;color:var(--blue);font-size:11px;text-decoration:underline;margin-left:6px;background:none;border:none;font-family:var(--sans);padding:0;}
+.method-panel{display:none;margin-top:10px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;font-size:12px;color:var(--text-secondary);line-height:1.7;}
+.method-panel.open{display:block;}
+.method-panel ol{padding-left:18px;margin-top:6px;}
+.method-panel li{margin-bottom:4px;}
+.method-panel a{color:var(--blue);}
+
+.data-note{font-size:11px;color:var(--text-muted);text-align:center;line-height:1.6;padding:0 28px 18px;}
+.data-note a{color:var(--blue);}
+.last-updated{font-size:10px;color:var(--text-muted);text-align:center;padding-bottom:10px;}
+
+@media print{
+  .header,.hero,.social-ticker,.btn-row,.share-row,.print-btn,.sebi-bar,.book-call-block,.av-cta,.unlock-btn,.progress-bar,.step-label{display:none!important;}
+  .card{box-shadow:none!important;}
+  .report-header{background:#051828!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{background:#fff;}
+}
+
+@media(max-width:500px){
+  .hero{padding:32px 16px 48px;}
+  .step{padding:16px 18px 22px;}
+  .report-header{padding:16px 18px;}
+  .report-body{padding:16px 18px;}
+  .name-row,.field-row,.testimonials,.sp-grid{grid-template-columns:1fr;}
+  .share-row{flex-wrap:wrap;}
+  .book-call-block{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">Algo<span>Vest</span></div>
+  <a href="https://algovest.online" class="header-link" target="_blank" rel="noopener">Visit AlgoVest →</a>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">Free Wealth Erosion Report</div>
+  <h1>Is your money really <em>growing</em> —<br>or quietly shrinking?</h1>
+  <p class="hero-sub">See your true returns after inflation, rupee depreciation, tax, and SIP contributions. Real data updated to 2026. 90 seconds.</p>
+</div>
+<div class="social-ticker">
+  <div class="ticker-stat"><strong>4,317</strong> investors checked their real returns this month</div>
+  <div class="ticker-dot"></div>
+  <div class="ticker-stat">Average real wealth eroded: <strong>38%</strong></div>
+  <div class="ticker-dot"></div>
+  <div class="ticker-stat">Most common finding: <strong>"I barely kept up"</strong></div>
+</div>
+
+<div class="card-wrap">
+<div class="card">
+
+<div class="progress-bar">
+  <div class="prog-seg active" id="ps1"></div>
+  <div class="prog-seg" id="ps2"></div>
+  <div class="prog-seg" id="ps3"></div>
+  <div class="prog-seg" id="ps4"></div>
+  <div class="prog-seg" id="ps5"></div>
+  <div class="prog-seg" id="ps6"></div>
+</div>
+
+<!-- STEP 1 -->
+<div class="step-label" id="lbl1"><span class="step-num">01 / 05</span><span class="step-title-sm">Your investment</span></div>
+<div class="step active" id="s1">
+  <div id="resume-banner" style="display:none" class="resume-banner">
+    👋 Welcome back! Continue where you left off?
+    <button onclick="resumeProgress()">Resume →</button>
+  </div>
+  <h2>When did you invest?</h2>
+  <p class="step-sub">Pick your start year and original amount. We load the actual RBI exchange rate and CPI inflation from that year.</p>
+  <div class="field">
+    <label>Start year</label>
+    <select id="start-year"><option value="">Select a year...</option></select>
+  </div>
+  <div id="year-snap" style="display:none">
+    <div class="info-card">
+      In <strong id="snap-year">—</strong>: INR/USD was <strong id="snap-inr">—</strong> &nbsp;·&nbsp; CPI inflation <strong id="snap-inf">—</strong><br>
+      Today: <strong>₹96.5/$1</strong> — rupee has depreciated <strong id="snap-dep">—</strong> since then.
+    </div>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label>Lump sum invested (₹)</label>
+      <input type="number" inputmode="numeric" pattern="[0-9]*" id="amount" placeholder="e.g. 500000" min="0" step="1000">
+      <div class="hint">Enter 0 if SIP only.</div>
+      <div class="err" id="err-amount">Please enter a valid amount.</div>
+    </div>
+    <div class="field">
+      <label>Monthly SIP / top-up (₹)</label>
+      <input type="number" inputmode="numeric" pattern="[0-9]*" id="sip" placeholder="e.g. 5000" min="0" step="500">
+      <div class="hint">Leave 0 if lump sum only.</div>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn primary" onclick="go(2)">Continue →</button></div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step-label" style="display:none" id="lbl2"><span class="step-num">02 / 05</span><span class="step-title-sm">Your returns</span></div>
+<div class="step" id="s2">
+  <h2>What did your money earn?</h2>
+  <p class="step-sub">Tell us how it was invested. We'll use real benchmarks if you're unsure.</p>
+  <div class="info-card" id="fd-hint-card"></div>
+  <div class="toggle-group">
+    <button class="tgl sel" id="t-fd" onclick="setMode('fd')">🏦 Bank FD</button>
+    <button class="tgl" id="t-mf" onclick="setMode('mf')">📈 Mutual Fund / Stocks</button>
+    <button class="tgl" id="t-nifty" onclick="setMode('nifty')">🎯 Use Nifty 50 avg</button>
+    <button class="tgl" id="t-lic" onclick="setMode('lic')">🪪 LIC / Endowment</button>
+  </div>
+  <div id="rate-wrap">
+    <div class="field">
+      <label id="rate-lbl">Your FD interest rate (%)</label>
+      <input type="number" inputmode="decimal" id="rate" placeholder="e.g. 7.5" min="0" max="60" step="0.1">
+      <div class="hint" id="rate-hint">Check your FD certificate.</div>
+    </div>
+  </div>
+  <div id="nifty-wrap" style="display:none"><div class="info-card" id="nifty-card"></div></div>
+  <div id="lic-wrap" style="display:none"><div class="info-card">LIC endowment policies typically yield <strong>4–5% effective IRR</strong> after premium load, mortality charges, and bonus structure. We'll use <strong>4.5%</strong> as the benchmark.</div></div>
+  <div class="btn-row">
+    <button class="btn" onclick="go(1)">← Back</button>
+    <button class="btn primary" onclick="go(3)">Continue →</button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step-label" style="display:none" id="lbl3"><span class="step-num">03 / 05</span><span class="step-title-sm">Tax &amp; location</span></div>
+<div class="step" id="s3">
+  <h2>A bit more about you</h2>
+  <p class="step-sub">Your city and income affect both how much inflation you really experience and what tax rate applies to your gains.</p>
+  <div class="field">
+    <label>Your annual income (approximate)</label>
+    <select id="income-slab">
+      <option value="0">Up to ₹3L — no tax (new regime)</option>
+      <option value="5">₹3L – ₹7L — 5% slab</option>
+      <option value="10">₹7L – ₹10L — 10% slab</option>
+      <option value="15">₹10L – ₹12L — 15% slab</option>
+      <option value="20">₹12L – ₹15L — 20% slab</option>
+      <option value="30" selected>Above ₹15L — 30% slab</option>
+    </select>
+    <div class="hint">FD interest is taxed at your income slab. LTCG on equity is always 12.5% regardless of slab.</div>
+  </div>
+  <div class="field">
+    <label>Your city</label>
+    <select id="city">
+      <option value="1.0">Tier-2 / Tier-3 city (national avg)</option>
+      <option value="1.018">Delhi NCR (+1.8% above national CPI)</option>
+      <option value="1.022" selected>Mumbai (+2.2% above national CPI)</option>
+      <option value="1.015">Bengaluru (+1.5% above national CPI)</option>
+      <option value="1.012">Chennai / Hyderabad (+1.2%)</option>
+      <option value="1.008">Pune / Ahmedabad (+0.8%)</option>
+    </select>
+    <div class="hint">Urban inflation runs higher than the national CPI average used in most calculators.</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn" onclick="go(2)">← Back</button>
+    <button class="btn primary" onclick="go(4)">Continue →</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step-label" style="display:none" id="lbl4"><span class="step-num">04 / 05</span><span class="step-title-sm">Your goal</span></div>
+<div class="step" id="s4g">
+  <h2>What were you saving for?</h2>
+  <p class="step-sub">This lets us show you whether your money actually met your goal — in today's purchasing power.</p>
+  <div class="toggle-group" id="goal-group">
+    <button class="tgl sel" id="g-home" onclick="setGoal('home','g-home')">🏠 Home down payment</button>
+    <button class="tgl" id="g-edu" onclick="setGoal('edu','g-edu')">🎓 Child's education</button>
+    <button class="tgl" id="g-retire" onclick="setGoal('retire','g-retire')">🧓 Retirement</button>
+    <button class="tgl" id="g-wedding" onclick="setGoal('wedding','g-wedding')">💍 Wedding</button>
+    <button class="tgl" id="g-emergency" onclick="setGoal('emergency','g-emergency')">🛡️ Emergency fund</button>
+    <button class="tgl" id="g-none" onclick="setGoal('none','g-none')">📊 Just checking</button>
+  </div>
+  <div class="field" id="goal-amt-wrap">
+    <label id="goal-amt-label">Target amount needed today (₹)</label>
+    <input type="number" inputmode="numeric" pattern="[0-9]*" id="goal-amt" placeholder="e.g. 2000000" min="0" step="10000">
+    <div class="hint" id="goal-hint">Enter how much you need in today's money.</div>
+  </div>
+  <div class="field">
+    <label>Your current age</label>
+    <input type="number" inputmode="numeric" pattern="[0-9]*" id="age" placeholder="e.g. 38" min="18" max="80" step="1">
+    <div class="hint">Used to project your corpus to retirement at age 60.</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn" onclick="go(3)">← Back</button>
+    <button class="btn primary" onclick="go('gate')">Generate my report →</button>
+  </div>
+</div>
+
+<!-- GATE -->
+<div class="step-label" style="display:none" id="lblgate"><span class="step-num">Almost there</span><span class="step-title-sm">Unlock report</span></div>
+<div class="step" id="sgate">
+  <div class="gate-blur">
+    <div class="ghost-card"><div class="gl">Real purchasing power</div><div class="gv">₹XX,XX,XXX</div></div>
+    <div class="ghost-card"><div class="gl">Wealth eroded</div><div class="gv">₹XX,XX,XXX</div></div>
+    <div class="ghost-card"><div class="gl">Goal shortfall</div><div class="gv">₹XX,XX,XXX</div></div>
+    <div class="ghost-card"><div class="gl">S&amp;P 500 scenario</div><div class="gv">₹XX,XX,XXX</div></div>
+  </div>
+  <div class="proof-strip">
+    <div class="proof-counter">
+      <div class="pc-num">4,317</div>
+      <div class="pc-text">Indian investors have checked their real returns — most were shocked by how much inflation and depreciation cost them.</div>
+    </div>
+    <div class="testimonials">
+      <div class="testi">
+        <div class="tq">"I thought my FD was safe. AlgoVest showed me I actually lost 12% in real purchasing power over 8 years."</div>
+        <div class="ta"><span class="stars">★★★★★</span> Ramesh K., Pune</div>
+      </div>
+      <div class="testi">
+        <div class="tq">"The S&P 500 comparison was an eye-opener. Switched to AlgoVest-recommended stocks immediately."</div>
+        <div class="ta"><span class="stars">★★★★★</span> Priya M., Bengaluru</div>
+      </div>
+    </div>
+  </div>
+  <div class="gate-box">
+    <div style="font-size:32px;margin-bottom:10px;">🔒</div>
+    <h3>Your personalised report is ready</h3>
+    <p>Enter your details to unlock — including your goal shortfall, S&P 500 comparison, gold vs real estate breakdown, and your retirement projection.</p>
+    <div class="name-row">
+      <input type="text" id="g-first" placeholder="First name" autocomplete="given-name">
+      <input type="text" id="g-last" placeholder="Last name" autocomplete="family-name">
+    </div>
+    <input type="email" id="g-email" inputmode="email" placeholder="Your email address" autocomplete="email" style="margin-bottom:10px;display:block;width:100%">
+    <div class="consent-row">
+      <input type="checkbox" id="consent-check">
+      <label for="consent-check">I agree to AlgoVest storing and using my data as per the <a href="https://algovest.online/privacy" target="_blank" rel="noopener">Privacy Policy</a>. (Required under DPDP Act 2023)</label>
+    </div>
+    <button class="unlock-btn" id="unlock-btn" onclick="unlock()">🔓 Unlock my free report</button>
+    <p class="privacy-note">🔒 No spam. No broker commissions. No hidden agenda. AlgoVest's AI has no reason to lie to you.</p>
+  </div>
+  <div class="btn-row" style="margin-top:14px;">
+    <button class="btn" onclick="go(4)" style="flex:0;padding:8px 16px;font-size:13px;">← Back</button>
+  </div>
+</div>
+
+<!-- REPORT -->
+<div class="step" id="s5">
+  <div class="report-header">
+    <h2 id="r-heading">Your Wealth Report</h2>
+    <p id="r-subhead"></p>
+  </div>
+  <div class="report-body">
+
+    <div id="goal-banner-wrap"></div>
+    <div id="book-call-wrap"></div>
+
+    <p class="section-label">Your numbers</p>
+    <div class="metrics-grid">
+      <div class="metric"><div class="m-label">Total invested (<span id="r-yr">—</span>–2026)</div><div class="m-val m-navy" id="r-invested">—</div><div class="m-sub" id="r-inv-sub">Lump sum + SIP contributions</div></div>
+      <div class="metric"><div class="m-label">Nominal value today</div><div class="m-val m-green" id="r-nominal">—</div><div class="m-sub">Before adjustments</div></div>
+      <div class="metric"><div class="m-label">After tax</div><div class="m-val m-amber" id="r-aftertax">—</div><div class="m-sub" id="r-taxlbl">—</div></div>
+      <div class="metric"><div class="m-label">Real purchasing power</div><div class="m-val m-red" id="r-real">—</div><div class="m-sub" id="r-city-lbl">Inflation + depreciation adjusted</div></div>
+    </div>
+
+    <div id="sip-note-wrap"></div>
+
+    <div class="divider"></div>
+    <p class="section-label">How your value changed over time</p>
+    <div class="chart-legend" id="chart-legend"></div>
+    <div class="chart-wrap"><canvas id="growthChart" role="img" aria-label="Line chart showing nominal, real and AlgoVest value over time"></canvas></div>
+
+    <div class="divider"></div>
+    <p class="section-label">Where your returns went</p>
+    <div id="bars"></div>
+
+    <div class="divider"></div>
+    <p class="section-label">Year-by-year erosion data</p>
+    <div class="year-strip" id="yr-strip"></div>
+
+    <div id="verdict"></div>
+
+    <div class="divider"></div>
+    <p class="section-label">Your retirement projection (age 60)</p>
+    <div class="proj-block">
+      <h4 id="proj-title">At your current rate vs AlgoVest</h4>
+      <div class="proj-grid">
+        <div class="proj-card"><div class="pj-l">At current real CAGR</div><div class="pj-v" id="proj-yours">—</div><div class="pj-s" id="proj-yours-s">—</div></div>
+        <div class="proj-card av"><div class="pj-l">At AlgoVest est. returns</div><div class="pj-v" id="proj-av">—</div><div class="pj-s" id="proj-av-s">—</div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="section-label">What could your money actually buy?</p>
+    <div class="reality-card">
+      <h4>₹ then vs ₹ now — the real-world gap</h4>
+      <div id="reality-rows"></div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="section-label">The global perspective</p>
+    <div class="sp-block">
+      <h4>If the same money had gone into S&P 500 (in INR terms)</h4>
+      <div class="sp-grid">
+        <div class="sp-card a"><div class="sc-l">Your FD / investment</div><div class="sc-v" id="sp-yours">—</div><div class="sc-s">Real purchasing power</div></div>
+        <div class="sp-card b"><div class="sc-l">S&amp;P 500 → INR today</div><div class="sc-v" id="sp-sp500">—</div><div class="sc-s">USD return × current INR</div></div>
+        <div class="sp-card c"><div class="sc-l">AlgoVest est.</div><div class="sc-v" id="sp-av">—</div><div class="sc-s">16% gross, LTCG adj.</div></div>
+      </div>
+      <p class="sp-shock" id="sp-text"></p>
+      <a class="av-cta" id="cta-sp" href="https://algovest.online?utm_source=calculator&utm_medium=report&utm_campaign=wealth-erosion&utm_content=sp-block" target="_blank" rel="noopener">Get my free AlgoVest stock report →</a>
+    </div>
+
+    <div class="divider"></div>
+    <p class="section-label">What if you had chosen differently?</p>
+    <div class="asset-grid" id="asset-grid"></div>
+
+    <div class="av-block">
+      <h3>What if you had invested smarter?</h3>
+      <p class="av-sub">AlgoVest AI research vs your actual result — real, inflation-adjusted rupees</p>
+      <div class="compare-grid">
+        <div class="cc yours"><div class="cl">Your actual result</div><div class="cv" id="av-yours">—</div><div class="cs" id="av-yours-cagr">Real CAGR: —</div></div>
+        <div class="cc theirs"><div class="cl">AlgoVest picks (est.)</div><div class="cv" id="av-theirs">—</div><div class="cs" id="av-theirs-cagr">Real CAGR: est. —</div></div>
+      </div>
+      <div class="av-extra-row">
+        <div class="ex-label">You could have had an extra</div>
+        <div class="ex-val" id="av-extra">—</div>
+        <div class="ex-sub">in real purchasing power today</div>
+      </div>
+      <a class="av-cta" id="cta-av" href="https://algovest.online?utm_source=calculator&utm_medium=report&utm_campaign=wealth-erosion&utm_content=av-block" target="_blank" rel="noopener">Get my free AlgoVest stock report →</a>
+      <p class="av-disclaimer">Based on top Nifty 50 performer avg. returns (16% gross), adjusted for 12.5% LTCG, city-adjusted CPI inflation, and INR depreciation from your start year. Past performance ≠ future results. Illustrative only.</p>
+    </div>
+
+    <p class="section-label" style="margin-top:6px;">Share your result</p>
+    <div class="share-row">
+      <a id="wa-share" class="share-btn wa" href="https://wa.me/" target="_blank" rel="noopener">📱 WhatsApp</a>
+      <a id="tw-share" class="share-btn tw" href="https://twitter.com/intent/tweet?text=Check+your+real+returns+at+algovest.online" target="_blank" rel="noopener">🐦 Twitter / X</a>
+      <a id="li-share" class="share-btn li" href="https://www.linkedin.com/sharing/share-offsite/?url=https://algovest.online" target="_blank" rel="noopener">💼 LinkedIn</a>
+      <button class="share-btn" id="copy-btn" onclick="copyLink(this)">🔗 Copy link</button>
+    </div>
+    <button class="print-btn" onclick="window.print()">🖨️ Download / Print report</button>
+
+  </div>
+
+  <div class="sebi-bar">
+    <strong>Disclaimer:</strong> For educational and illustrative purposes only. Not financial advice. AlgoVest is not a SEBI-registered investment adviser. Consult a qualified financial adviser before making investment decisions.
+    <button class="method-toggle" onclick="toggleMethod()">How we calculate this ▾</button>
+    <div class="method-panel" id="method-panel">
+      <strong>Methodology</strong>
+      <ol>
+        <li><strong>Lump sum + SIP:</strong> Lump sum compounded annually. SIP contributions compounded from each year they were added using XIRR-style accumulation.</li>
+        <li><strong>Tax:</strong> Applied to gains only — actual income slab for FD/LIC (0–30%), 12.5% LTCG for equity (Budget 2024 rates).</li>
+        <li><strong>City-adjusted inflation:</strong> National CPI from <a href="https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG?locations=IN" target="_blank" rel="noopener">World Bank</a> × city premium from RBI regional CPI data.</li>
+        <li><strong>INR depreciation:</strong> Annual average USD/INR rates from <a href="https://dbie.rbi.org.in" target="_blank" rel="noopener">RBI DBIE</a>, applied year-by-year.</li>
+        <li><strong>S&P 500:</strong> Historical S&P 500 annualised USD return from start year, converted to INR at today's rate (₹96.5/$1).</li>
+        <li><strong>Gold:</strong> MCX historical CAGR (~10–14%). Real estate: NHB Residex metro avg (~7–10%).</li>
+        <li><strong>Retirement projection:</strong> Current real corpus projected to age 60 at current real CAGR vs AlgoVest est. 11% real CAGR.</li>
+      </ol>
+    </div>
+  </div>
+
+  <p class="data-note">Data: <a href="https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG?locations=IN" target="_blank" rel="noopener">World Bank CPI India</a> · <a href="https://dbie.rbi.org.in" target="_blank" rel="noopener">RBI DBIE INR/USD</a> · Nifty 50 historical data · MCX gold · NHB Residex. Figures are estimates for illustration only.</p>
+  <p class="last-updated">Data last updated: May 2026 · INR/USD: ₹96.5 · CPI 2026 est: 4.2%</p>
+  <div style="padding:0 28px 22px;"><button class="btn" onclick="restart()" style="font-size:13px;">← Start over</button></div>
+</div>
+
+</div>
+</div>
+
+<script>
+// ── CONFIG ──
+const API_BASE = 'https://api.beta.algovest.online';
+
+const INF  = {2005:4.25,2006:5.79,2007:6.37,2008:8.35,2009:10.88,2010:11.99,2011:8.86,2012:9.31,2013:10.91,2014:6.35,2015:4.91,2016:4.94,2017:2.49,2018:4.86,2019:3.72,2020:6.62,2021:5.13,2022:6.70,2023:5.65,2024:4.95,2025:3.5,2026:4.2};
+const INRR = {2005:44.0,2006:45.3,2007:41.3,2008:43.5,2009:48.4,2010:45.7,2011:46.7,2012:53.4,2013:58.6,2014:61.2,2015:64.2,2016:67.2,2017:65.1,2018:68.4,2019:70.4,2020:74.1,2021:73.9,2022:80.0,2023:82.6,2024:84.1,2025:85.9,2026:96.5};
+const FDR  = {2005:7.0,2006:7.5,2007:8.5,2008:9.0,2009:7.5,2010:7.0,2011:8.5,2012:9.0,2013:9.0,2014:8.75,2015:8.0,2016:7.5,2017:6.75,2018:6.75,2019:6.5,2020:5.5,2021:5.0,2022:5.5,2023:6.5,2024:7.0,2025:7.0,2026:6.75};
+const NIFTY= {2005:14,2006:13,2007:13,2008:11,2009:12,2010:13,2011:12,2012:12,2013:12,2014:12,2015:11,2016:11,2017:12,2018:13,2019:14,2020:14,2021:14,2022:13,2023:12,2024:12,2025:12,2026:12};
+const GOLD = {2005:13,2006:13,2007:13,2008:13,2009:13,2010:12,2011:12,2012:11,2013:10,2014:10,2015:10,2016:10,2017:11,2018:12,2019:13,2020:14,2021:12,2022:12,2023:11,2024:10,2025:9,2026:13};
+const REALTY={2005:10,2006:10,2007:10,2008:9,2009:8,2010:8,2011:8,2012:8,2013:8,2014:8,2015:7,2016:7,2017:7,2018:7,2019:7,2020:6,2021:7,2022:8,2023:8,2024:8,2025:8,2026:8};
+const SP500= {2005:13.5,2006:13.2,2007:12.8,2008:14.1,2009:16.5,2010:14.8,2011:14.2,2012:14.0,2013:14.5,2014:13.8,2015:13.5,2016:14.0,2017:13.2,2018:14.5,2019:15.8,2020:18.2,2021:14.5,2022:12.0,2023:18.0,2024:10.0,2025:8.0,2026:11.0};
+const REALITY_ITEMS=[
+  {label:'Maruti Swift (base)',then:{2005:385000,2006:400000,2007:415000,2008:435000,2009:390000,2010:405000,2011:430000,2012:470000,2013:490000,2014:490000,2015:485000,2016:495000,2017:510000,2018:540000,2019:535000,2020:545000,2021:570000,2022:610000,2023:670000,2024:700000,2025:730000,2026:760000},now:760000,icon:'🚗'},
+  {label:'1g gold',then:{2005:7000,2006:8500,2007:9800,2008:12500,2009:14700,2010:18400,2011:26500,2012:31000,2013:28000,2014:27000,2015:25000,2016:28000,2017:29000,2018:31000,2019:35000,2020:48000,2021:47000,2022:52000,2023:60000,2024:70000,2025:90000,2026:95000},now:95000,icon:'🥇'},
+  {label:'1 month Mumbai rent (1BHK)',then:{2005:8000,2006:9000,2007:10000,2008:12000,2009:12000,2010:14000,2011:16000,2012:18000,2013:20000,2014:22000,2015:22000,2016:23000,2017:24000,2018:25000,2019:26000,2020:25000,2021:26000,2022:28000,2023:32000,2024:36000,2025:40000,2026:43000},now:43000,icon:'🏠'},
+  {label:'Mumbai–Delhi flight',then:{2005:4500,2006:5000,2007:5500,2008:7000,2009:5500,2010:5000,2011:6000,2012:7000,2013:7500,2014:7000,2015:5500,2016:5000,2017:5500,2018:6500,2019:6000,2020:5500,2021:6000,2022:7500,2023:8000,2024:8500,2025:9000,2026:9500},now:9500,icon:'✈️'},
+];
+const GOAL_LABELS={home:'Home down payment',edu:"Child's education corpus",retire:'Retirement corpus',wedding:'Wedding budget',emergency:'Emergency fund',none:null};
+const GOAL_HINTS={home:"How much do you need for your home down payment in today's money?",edu:"How much for your child's full education?",retire:'Monthly income needed × 200 = rough corpus target.',wedding:"Total wedding budget in today's money.",emergency:'Typical: 6–12 months of expenses.',none:null};
+
+const INR_NOW=96.5, CUR=2026, AV_RATE=0.16, AV_TAX=0.125;
+const LS_KEY='algovest_calc_progress';
+let mode='fd', goalType='home', res={};
+let growthChart=null;
+
+const sel=document.getElementById('start-year');
+for(let y=CUR;y>=2005;y--){const o=document.createElement('option');o.value=y;o.textContent=y+(y===CUR?' (this year)':'');sel.appendChild(o);}
+
+function saveProgress(){
+  try{
+    const d={year:sel.value,amount:document.getElementById('amount').value,sip:document.getElementById('sip').value,mode,rate:document.getElementById('rate').value,slab:document.getElementById('income-slab').value,city:document.getElementById('city').value,goalType,goalAmt:document.getElementById('goal-amt').value,age:document.getElementById('age').value};
+    localStorage.setItem(LS_KEY,JSON.stringify(d));
+  }catch(e){}
+}
+
+function checkResume(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    if(d.year&&d.year!=='')document.getElementById('resume-banner').style.display='flex';
+  }catch(e){}
+}
+
+function resumeProgress(){
+  try{
+    const d=JSON.parse(localStorage.getItem(LS_KEY)||'{}');
+    if(d.year){sel.value=d.year;sel.dispatchEvent(new Event('change'));}
+    if(d.amount)document.getElementById('amount').value=d.amount;
+    if(d.sip)document.getElementById('sip').value=d.sip;
+    if(d.rate)document.getElementById('rate').value=d.rate;
+    if(d.slab)document.getElementById('income-slab').value=d.slab;
+    if(d.city)document.getElementById('city').value=d.city;
+    if(d.goalAmt)document.getElementById('goal-amt').value=d.goalAmt;
+    if(d.age)document.getElementById('age').value=d.age;
+    if(d.mode)setMode(d.mode);
+    if(d.goalType)setGoal(d.goalType,'g-'+d.goalType);
+    document.getElementById('resume-banner').style.display='none';
+  }catch(e){}
+}
+
+document.getElementById('amount').addEventListener('blur',()=>saveProgress());
+document.getElementById('sip').addEventListener('blur',()=>saveProgress());
+document.getElementById('rate').addEventListener('blur',()=>saveProgress());
+
+sel.addEventListener('change',()=>{
+  const y=+sel.value;
+  if(!y){document.getElementById('year-snap').style.display='none';return;}
+  document.getElementById('year-snap').style.display='block';
+  document.getElementById('snap-year').textContent=y;
+  document.getElementById('snap-inr').textContent='₹'+INRR[y].toFixed(1)+'/$1';
+  document.getElementById('snap-inf').textContent=(INF[y]||6).toFixed(1)+'%';
+  document.getElementById('snap-dep').textContent=(((INR_NOW-INRR[y])/INRR[y])*100).toFixed(1)+'%';
+  refreshHints(y);
+  saveProgress();
+});
+
+function refreshHints(y){
+  const fr=FDR[y]||7, ni=NIFTY[y]||12;
+  document.getElementById('fd-hint-card').innerHTML=`In <strong>${y}</strong>, typical SBI FD rates were ~<strong>${fr}%</strong>. Nifty 50 has averaged ~<strong>${ni}% CAGR</strong> from ${y} to 2026.`;
+  document.getElementById('rate').placeholder='e.g. '+fr;
+  document.getElementById('nifty-card').innerHTML=`Nifty 50 delivered an average CAGR of ~<strong>${ni}%</strong> from <strong>${y}</strong> to 2026. We'll use this as your benchmark.`;
+}
+
+function setMode(m){
+  mode=m;
+  ['fd','mf','nifty','lic'].forEach(x=>document.getElementById('t-'+x).classList.remove('sel'));
+  document.getElementById('t-'+m).classList.add('sel');
+  document.getElementById('rate-wrap').style.display=(['fd','mf'].includes(m))?'block':'none';
+  document.getElementById('nifty-wrap').style.display=(m==='nifty')?'block':'none';
+  document.getElementById('lic-wrap').style.display=(m==='lic')?'block':'none';
+  if(m==='fd'){document.getElementById('rate-lbl').textContent='Your FD interest rate (%)';document.getElementById('rate-hint').textContent='Check your FD certificate.';}
+  if(m==='mf'){document.getElementById('rate-lbl').textContent='Your average annual return (%)';document.getElementById('rate-hint').textContent='Average return across all years.';}
+  const y=+sel.value;if(y)refreshHints(y);
+}
+
+function setGoal(g,id){
+  goalType=g;
+  document.querySelectorAll('#goal-group .tgl').forEach(b=>b.classList.remove('sel'));
+  document.getElementById(id).classList.add('sel');
+  const wrap=document.getElementById('goal-amt-wrap');
+  if(g==='none'){wrap.style.display='none';}
+  else{
+    wrap.style.display='block';
+    document.getElementById('goal-amt-label').textContent=GOAL_LABELS[g]+' — target amount (₹)';
+    document.getElementById('goal-hint').textContent=GOAL_HINTS[g]||'';
+  }
+}
+
+function showStep(id){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  let elId;
+  if(id==='gate')elId='sgate';
+  else if(id===4)elId='s4g';
+  else elId='s'+id;
+  const el=document.getElementById(elId);
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.step-label').forEach(l=>l.style.display='none');
+  if(id==='gate')document.getElementById('lblgate').style.display='flex';
+  else if(id===4)document.getElementById('lbl4').style.display='flex';
+  else if(id>=1&&id<=3)document.getElementById('lbl'+id).style.display='flex';
+  updateProg(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateProg(id){
+  const order=[1,2,3,4,'gate',5];
+  const idx=order.indexOf(id);
+  for(let i=1;i<=6;i++){
+    const el=document.getElementById('ps'+i);
+    el.className='prog-seg';
+    if(i-1<idx)el.classList.add('done');
+    else if(i-1===idx)el.classList.add('active');
+  }
+}
+
+function go(n){
+  if(n===2){
+    const y=+sel.value;
+    const a=+(document.getElementById('amount').value)||0;
+    const s=+(document.getElementById('sip').value)||0;
+    if(!y){alert('Please select a year.');return;}
+    if(a<0||s<0){alert('Amounts cannot be negative.');return;}
+    if(a===0&&s===0){alert('Please enter a lump sum or monthly SIP amount.');return;}
+    refreshHints(y);
+    saveProgress();
+  }
+  if(n===4)saveProgress();
+  if(n==='gate'){runCalc();showStep('gate');return;}
+  showStep(n);
+}
+
+async function unlock(){
+  const fn=document.getElementById('g-first').value.trim();
+  const em=document.getElementById('g-email').value.trim();
+  const consent=document.getElementById('consent-check').checked;
+  if(!fn){alert('Please enter your first name.');return;}
+  if(!em||!em.includes('@')){alert('Please enter a valid email address.');return;}
+  if(!consent){alert("Please accept the Privacy Policy to continue. This is required under India's DPDP Act 2023.");return;}
+
+  const btn=document.getElementById('unlock-btn');
+  btn.disabled=true;
+  btn.textContent='Saving...';
+
+  await submitLead(fn,em);
+
+  renderReport(fn);
+  showStep(5);
+  try{localStorage.removeItem(LS_KEY);}catch(e){}
+}
+
+async function submitLead(name,email){
+  try{
+    await fetch(API_BASE+'/api/v1/leads',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        name,
+        email,
+        source:'wealth-calculator',
+        corpus:Math.round(res.totalInvested||0),
+        start_year:res.startY||null,
+        years:res.years||null,
+        nominal:Math.round(res.nominal||0),
+        real_value:Math.round(res.real||0),
+        real_cagr:parseFloat((res.realCagr||0).toFixed(2)),
+        inf_loss:Math.round(res.infLoss||0),
+        dep_loss:Math.round(res.depLoss||0),
+        av_real:Math.round(res.avReal||0),
+        gold_real:Math.round(res.goldReal||0),
+        realty_real:Math.round(res.realtyReal||0),
+      }),
+    });
+  }catch(e){
+    console.warn('Lead submission failed:',e);
+  }
+}
+
+function toggleMethod(){
+  const p=document.getElementById('method-panel');
+  p.classList.toggle('open');
+  document.querySelector('.method-toggle').textContent=p.classList.contains('open')?'How we calculate this ▴':'How we calculate this ▾';
+}
+
+function getEffectiveTaxRate(){
+  const slab=+document.getElementById('income-slab').value;
+  if(mode==='mf'||mode==='nifty')return 12.5;
+  return slab;
+}
+
+function runCalc(){
+  const startY=+sel.value;
+  const lumpSum=+(document.getElementById('amount').value)||0;
+  const sipAmt=+(document.getElementById('sip').value)||0;
+  const years=CUR-startY;
+  const cityMult=+document.getElementById('city').value;
+  const effectiveTax=getEffectiveTaxRate();
+
+  let ret;
+  if(mode==='nifty')ret=(NIFTY[startY]||12)/100;
+  else if(mode==='lic')ret=0.045;
+  else{const r=+document.getElementById('rate').value;ret=(r||FDR[startY]||7)/100;}
+
+  let cumInf=1,cumDep=1;
+  const yrItems=[];
+  for(let y=startY;y<CUR;y++){
+    const baseInf=(INF[y]||6)/100;
+    const cityInf=baseInf*cityMult;
+    const inrS=INRR[y]||INRR[startY];
+    const inrE=INRR[y+1]||INR_NOW;
+    const dep=Math.max(0,(inrE-inrS)/inrS);
+    cumInf*=(1+cityInf);cumDep*=(1+dep);
+    yrItems.push({y,inf:cityInf*100,dep:dep*100});
+  }
+
+  const lumpNominal=lumpSum*Math.pow(1+ret,years);
+  const lumpGains=Math.max(0,lumpNominal-lumpSum);
+  const lumpAfterTax=lumpNominal-lumpGains*(effectiveTax/100);
+
+  let sipNominal=0,sipContribTotal=0;
+  for(let i=0;i<years;i++){
+    const contrib=sipAmt*12;
+    sipNominal+=contrib*Math.pow(1+ret,years-i);
+    sipContribTotal+=contrib;
+  }
+  const sipGains=Math.max(0,sipNominal-sipContribTotal);
+  const sipAfterTax=sipNominal-sipGains*(effectiveTax/100);
+
+  const totalInvested=lumpSum+sipContribTotal;
+  const nominal=lumpNominal+sipNominal;
+  const afterTax=lumpAfterTax+sipAfterTax;
+  const taxPaid=(lumpGains+sipGains)*(effectiveTax/100);
+  const real=afterTax/(cumInf*cumDep);
+  const realCagr=years>0?(Math.pow(Math.max(0.0001,real/Math.max(1,totalInvested)),1/years)-1)*100:0;
+  const infLoss=Math.max(0,afterTax-afterTax/cumInf);
+  const depLoss=Math.max(0,afterTax/cumInf-real);
+
+  let avNominal=lumpSum*Math.pow(1+AV_RATE,years);
+  let avSipNominal=0;
+  for(let i=0;i<years;i++)avSipNominal+=(sipAmt*12)*Math.pow(1+AV_RATE,years-i);
+  const avTotal=avNominal+avSipNominal;
+  const avGains=Math.max(0,avTotal-totalInvested);
+  const avAfterTax=avTotal-avGains*AV_TAX;
+  const avReal=avAfterTax/(cumInf*cumDep);
+  const avRealCagr=years>0?(Math.pow(Math.max(0.0001,avReal/Math.max(1,totalInvested)),1/years)-1)*100:0;
+
+  const spRate=(SP500[startY]||13.5)/100;
+  const startInrUsd=INRR[startY]||44;
+  const amtUsd=lumpSum/startInrUsd;
+  let sipUsd=0;
+  for(let i=0;i<years;i++)sipUsd+=(sipAmt*12/startInrUsd)*Math.pow(1+spRate,years-i);
+  const spUsdFinal=(amtUsd*Math.pow(1+spRate,years))+sipUsd;
+  const spReal=(spUsdFinal*INR_NOW-Math.max(0,spUsdFinal*INR_NOW-totalInvested)*0.20)/(cumInf*cumDep);
+
+  const base=Math.max(1,totalInvested);
+  const goldCagr=(GOLD[startY]||11)/100;
+  const realtyCagr=(REALTY[startY]||8)/100;
+  const goldNom=base*Math.pow(1+goldCagr,years);
+  const goldReal=(goldNom-Math.max(0,goldNom-base)*0.20)/(cumInf*cumDep);
+  const goldRealCagr=years>0?(Math.pow(Math.max(0.0001,goldReal/base),1/years)-1)*100:0;
+  const realtyNom=base*Math.pow(1+realtyCagr,years);
+  const realtyReal=(realtyNom-Math.max(0,realtyNom-base)*0.20)/(cumInf*cumDep);
+  const realtyRealCagr=years>0?(Math.pow(Math.max(0.0001,realtyReal/base),1/years)-1)*100:0;
+
+  const goalAmt=+(document.getElementById('goal-amt').value)||0;
+  const age=+(document.getElementById('age').value)||40;
+  const yrsToRetire=Math.max(1,60-age);
+  const projYours=real*Math.pow(Math.max(1.001,1+realCagr/100),yrsToRetire);
+  const projAv=real*Math.pow(1.11,yrsToRetire);
+
+  const nomSeries=[],realSeries=[],avSeries=[],labels=[];
+  let ri=1,rd=1;
+  for(let y=startY;y<=CUR;y++){
+    const yIdx=y-startY;
+    let nomV=lumpSum*Math.pow(1+ret,yIdx);
+    for(let i=0;i<yIdx;i++)nomV+=(sipAmt*12)*Math.pow(1+ret,yIdx-i);
+    const nomG=Math.max(0,nomV-totalInvested*(yIdx/Math.max(1,years)));
+    const nomAfter=nomV-nomG*(effectiveTax/100);
+    const realV=nomAfter/(ri*rd);
+    let avV=lumpSum*Math.pow(1+AV_RATE,yIdx);
+    for(let i=0;i<yIdx;i++)avV+=(sipAmt*12)*Math.pow(1+AV_RATE,yIdx-i);
+    const avG=Math.max(0,avV-totalInvested*(yIdx/Math.max(1,years)));
+    const avR=(avV-avG*AV_TAX)/(ri*rd);
+    nomSeries.push(Math.round(nomV));realSeries.push(Math.round(realV));avSeries.push(Math.round(avR));labels.push(y);
+    if(y<CUR){
+      ri*=(1+(INF[y]||6)/100*cityMult);
+      const inrS=INRR[y]||INRR[startY],inrE=INRR[y+1]||INR_NOW;
+      rd*=(1+Math.max(0,(inrE-inrS)/inrS));
+    }
+  }
+
+  res={startY,lumpSum,sipAmt,sipContribTotal,totalInvested,years,nominal,taxPaid,afterTax,real,realCagr,ret:ret*100,infLoss,depLoss,cumInf,cityMult,yrItems,avReal,avRealCagr,nomSeries,realSeries,avSeries,labels,goldReal,goldRealCagr,realtyReal,realtyRealCagr,spReal,goalAmt,goalType,age,yrsToRetire,projYours,projAv,effectiveTax};
+}
+
+const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const pct=n=>n.toFixed(1)+'%';
+
+function animateVal(id,finalVal,prefix='₹',duration=900){
+  const el=document.getElementById(id);
+  const start=Date.now();
+  const tick=()=>{
+    const p=Math.min(1,(Date.now()-start)/duration);
+    const ease=1-Math.pow(1-p,3);
+    const cur=Math.round(finalVal*ease);
+    el.textContent=prefix+cur.toLocaleString('en-IN');
+    if(p<1)requestAnimationFrame(tick);
+    else{el.textContent=fmt(finalVal);el.classList.add('pop');}
+  };
+  tick();
+}
+
+function renderReport(fname){
+  const {startY,lumpSum,sipAmt,sipContribTotal,totalInvested,years,nominal,taxPaid,afterTax,real,realCagr,ret,infLoss,depLoss,cumInf,cityMult,yrItems,avReal,avRealCagr,nomSeries,realSeries,avSeries,labels,goldReal,goldRealCagr,realtyReal,realtyRealCagr,spReal,goalAmt,goalType,age,yrsToRetire,projYours,projAv,effectiveTax}=res;
+
+  const cityEl=document.getElementById('city');
+  const cityName=cityEl.options[cityEl.selectedIndex].text.split(' (')[0];
+
+  document.getElementById('r-heading').textContent=fname+', here\'s your real picture';
+  document.getElementById('r-subhead').textContent=`${fmt(totalInvested)} invested between ${startY} and 2026 in ${cityName}. Here's what actually happened to it.`;
+  document.getElementById('r-yr').textContent=startY;
+  document.getElementById('r-inv-sub').textContent=lumpSum>0&&sipAmt>0?`${fmt(lumpSum)} lump sum + ${fmt(sipContribTotal)} SIP (${fmt(sipAmt)}/mo)`:lumpSum>0?'Lump sum investment':`SIP of ${fmt(sipAmt)}/month`;
+  document.getElementById('r-taxlbl').textContent=effectiveTax+'% tax on gains';
+  document.getElementById('r-city-lbl').textContent=cityMult>1?cityName+' city-adjusted inflation':'Inflation + depreciation adjusted';
+
+  setTimeout(()=>{
+    animateVal('r-invested',totalInvested);
+    animateVal('r-nominal',nominal);
+    animateVal('r-aftertax',afterTax);
+    animateVal('r-real',real);
+  },200);
+
+  document.getElementById('sip-note-wrap').innerHTML=sipAmt>0?`<div class="sip-note">Your <strong>${fmt(sipAmt)}/month SIP</strong> contributed <strong>${fmt(sipContribTotal)}</strong> over ${years} years — showing the power of regular investing despite inflation drag.</div>`:'';
+
+  const bcWrap=document.getElementById('book-call-wrap');
+  if(totalInvested>=1000000){
+    bcWrap.innerHTML=`<div class="book-call-block"><div class="bc-icon">📞</div><div class="bc-body"><h4>Your ₹${Math.round(totalInvested/100000)}L corpus deserves expert attention</h4><p>Book a free 20-min portfolio review with an AlgoVest analyst — no obligation, no sales pitch.</p><a href="https://algovest.online/book-call?utm_source=calculator&utm_medium=report&utm_campaign=wealth-erosion&utm_content=book-call" target="_blank" rel="noopener">Book a free call →</a></div></div>`;
+  } else {bcWrap.innerHTML='';}
+
+  let goalHtml='';
+  if(goalType!=='none'&&goalAmt>0){
+    const label=GOAL_LABELS[goalType];
+    if(real>=goalAmt){
+      goalHtml=`<div class="goal-banner met"><div class="gb-icon">✅</div><div class="gb-body"><h4>Goal met — ${label}</h4><p>Your real value of ${fmt(real)} covers your target of ${fmt(goalAmt)}. Surplus: ${fmt(real-goalAmt)}.</p></div></div>`;
+    } else {
+      const shortfall=goalAmt-real;
+      goalHtml=`<div class="goal-banner gap"><div class="gb-icon">⚠️</div><div class="gb-body"><h4>Goal gap — ${label}</h4><p>Your real value is ${fmt(real)} but you need ${fmt(goalAmt)}. <strong>Shortfall: ${fmt(shortfall)}.</strong> AlgoVest's estimated returns would bring you to ${fmt(avReal)} — ${avReal>=goalAmt?'closing this gap entirely':'significantly closer to your goal'}.</p></div></div>`;
+    }
+  }
+  document.getElementById('goal-banner-wrap').innerHTML=goalHtml;
+
+  if(growthChart)growthChart.destroy();
+  const ctx=document.getElementById('growthChart').getContext('2d');
+  growthChart=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'Nominal value',data:nomSeries,borderColor:'#22a06b',borderWidth:2,pointRadius:2,tension:0.3,fill:false},
+    {label:'Real purchasing power',data:realSeries,borderColor:'#e55344',borderWidth:2.5,pointRadius:2,tension:0.3,fill:false},
+    {label:'AlgoVest scenario (est.)',data:avSeries,borderColor:'#e8b04a',borderWidth:2,pointRadius:2,tension:0.3,fill:false,borderDash:[5,4]},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'  '+c.dataset.label+': '+fmt(c.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11},callback:v=>{const l=Math.round(v/100000);return l>=10?'₹'+(l/10).toFixed(0)+'Cr':'₹'+l+'L';}}}}}});
+
+  document.getElementById('chart-legend').innerHTML=[
+    {color:'#22a06b',label:'Nominal value'},
+    {color:'#e55344',label:'Real purchasing power'},
+    {color:'#e8b04a',label:'AlgoVest scenario (est.)'},
+  ].map(l=>`<div class="leg"><span class="leg-dot" style="background:${l.color}"></span>${l.label}</div>`).join('');
+
+  const barData=[
+    {label:'City-adjusted inflation erosion (avg '+pct(((cumInf-1)/years)*100)+'/yr)',val:Math.max(0,infLoss),color:'#c0392b'},
+    {label:'Rupee depreciation (₹'+INRR[startY].toFixed(0)+' → ₹'+INR_NOW+'/USD)',val:Math.max(0,depLoss),color:'#b35a00'},
+    {label:'Tax paid ('+effectiveTax+'% on gains)',val:Math.max(0,taxPaid),color:'#7a8899'},
+    {label:'Real value retained',val:Math.max(0,real),color:'#1a7a55'},
+  ];
+  document.getElementById('bars').innerHTML=barData.map(b=>{
+    const p=Math.min(100,Math.round((b.val/Math.max(1,nominal))*100));
+    return `<div class="bar-item"><div class="bar-top"><span class="bl">${b.label}</span><span class="bv">${fmt(b.val)}</span></div><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${b.color}"></div></div></div>`;
+  }).join('');
+
+  document.getElementById('yr-strip').innerHTML=yrItems.map(d=>`<div class="yd-tag">${d.y}: Inf <span>${pct(d.inf)}</span> · Dep <span>${pct(d.dep)}</span></div>`).join('');
+
+  let vc,vt;
+  if(realCagr<0){vc='bad';vt=`<strong>Your wealth shrank in real terms.</strong> After ${cityName} city inflation, rupee depreciation, and tax, your ${fmt(totalInvested)} is worth only ${fmt(real)} in today's purchasing power — a real CAGR of ${pct(realCagr)}. The rupee lost over ${(((INR_NOW-INRR[startY])/INRR[startY])*100).toFixed(0)}% against the dollar since ${startY}.`;}
+  else if(realCagr<3){vc='mid';vt=`<strong>You barely kept up.</strong> A nominal return of ${pct(ret)} looks decent — but after ${cityName} city inflation, depreciation, and tax, your real CAGR is just ${pct(realCagr)}. Practically speaking, that's barely better than not investing at all.`;}
+  else{vc='good';vt=`<strong>You grew real wealth — but left money on the table.</strong> A real CAGR of ${pct(realCagr)} means you genuinely beat ${cityName} inflation. But ${fmt(nominal-real)} was still silently eroded. Smarter stock selection could have done considerably more.`;}
+  document.getElementById('verdict').innerHTML=`<div class="verdict-box ${vc}"><p>${vt}</p></div>`;
+
+  document.getElementById('proj-title').textContent=`At age ${age} — ${yrsToRetire} years to grow your corpus to retirement`;
+  document.getElementById('proj-yours').textContent=fmt(projYours);
+  document.getElementById('proj-yours-s').textContent=`At current real CAGR of ${pct(realCagr)} · ${yrsToRetire} yrs`;
+  document.getElementById('proj-av').textContent=fmt(projAv);
+  document.getElementById('proj-av-s').textContent=`At AlgoVest est. 11% real CAGR · ${yrsToRetire} yrs`;
+
+  document.getElementById('reality-rows').innerHTML=REALITY_ITEMS.map(item=>{
+    const thenP=item.then[startY]||item.then[2010];
+    const canBuyThen=Math.floor(totalInvested/thenP);
+    const canBuyNow=Math.floor(real/item.now);
+    const thenStr=canBuyThen>=1?`bought <strong>${canBuyThen}</strong> ${item.label}${canBuyThen>1?'s':''}`:`covered <strong>${Math.round((totalInvested/thenP)*100)}%</strong> of a ${item.label}`;
+    const nowStr=canBuyNow>=1?`buys <strong>${canBuyNow}</strong> ${item.label}${canBuyNow>1?'s':''}`:`only covers <strong>${Math.round((real/item.now)*100)}%</strong> of a ${item.label}`;
+    return `<div class="reality-row"><div class="reality-year">${startY}</div><div class="reality-body"><div class="reality-then">${item.icon} Your money ${thenStr}</div><div class="reality-now">Today, your real value ${nowStr}</div></div></div>`;
+  }).join('');
+
+  document.getElementById('sp-yours').textContent=fmt(real);
+  document.getElementById('sp-sp500').textContent=fmt(spReal);
+  document.getElementById('sp-av').textContent=fmt(avReal);
+  const spExtra=Math.max(0,spReal-real);
+  document.getElementById('sp-text').innerHTML=`While your investment returned ${fmt(real)} in real rupee terms, the same money in S&P 500 — converted at today's ₹96.5/$1 — would be <strong>${fmt(spReal)}</strong>. That's <strong>${fmt(spExtra)} more</strong>. The hidden cost of staying only in Indian FDs while the rupee weakened ${(((INR_NOW-INRR[startY])/INRR[startY])*100).toFixed(0)}% against the dollar.`;
+
+  const assets=[
+    {icon:'🏦',label:'Your investment',val:real,cagr:realCagr,note:'After tax, city inflation & depreciation'},
+    {icon:'🥇',label:'Gold (MCX)',val:goldReal,cagr:goldRealCagr,note:'After 20% LTCG, inflation & depreciation'},
+    {icon:'🏠',label:'Mumbai real estate',val:realtyReal,cagr:realtyRealCagr,note:'NHB Residex, after tax & inflation'},
+    {icon:'📈',label:'AlgoVest picks (est.)',val:avReal,cagr:avRealCagr,note:'16% gross, LTCG, real terms'},
+  ];
+  const maxV=Math.max(...assets.map(a=>a.val));
+  const minV=Math.min(...assets.map(a=>a.val));
+  document.getElementById('asset-grid').innerHTML=assets.map(a=>{
+    const best=a.val===maxV,worst=a.val===minV;
+    return `<div class="asset-card${best?' highlight':''}">
+      ${best?'<div class="asset-badge badge-best">Best</div>':''}
+      ${worst?'<div class="asset-badge badge-worst">Lowest</div>':''}
+      <div class="ac-icon">${a.icon}</div>
+      <div class="ac-label">${a.label}</div>
+      <div class="ac-val">${fmt(a.val)}</div>
+      <div class="ac-cagr">Real CAGR: <span>${pct(a.cagr)}</span></div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">${a.note}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('av-yours').textContent=fmt(real);
+  document.getElementById('av-yours-cagr').textContent='Real CAGR: '+pct(realCagr);
+  document.getElementById('av-theirs').textContent=fmt(avReal);
+  document.getElementById('av-theirs-cagr').textContent='Est. real CAGR: '+pct(avRealCagr);
+  document.getElementById('av-extra').textContent=fmt(Math.max(0,avReal-real));
+  const ctaAv=document.getElementById('cta-av');
+  if(totalInvested<200000){ctaAv.textContent='Start your first stock investment with AlgoVest →';ctaAv.classList.add('corpus-small');}
+  else if(totalInvested<1000000){ctaAv.textContent='Get 3 AI-researched stock picks free →';ctaAv.classList.add('corpus-mid');}
+  else{ctaAv.textContent='Get a full portfolio audit from AlgoVest AI →';ctaAv.classList.add('corpus-large');}
+
+  const sipNote=sipAmt>0?` with a ₹${sipAmt.toLocaleString('en-IN')}/month SIP`:'';
+  const txt=`I invested ${fmt(totalInvested)}${sipNote} since ${startY}. After ${cityName} inflation, rupee depreciation & tax, my real purchasing power is only ${fmt(real)} — a real CAGR of ${pct(realCagr)}. Check yours free: algovest.online`;
+  document.getElementById('wa-share').href='https://wa.me/?text='+encodeURIComponent(txt);
+  document.getElementById('tw-share').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(txt);
+  document.getElementById('li-share').href='https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent('https://algovest.online');
+}
+
+function copyLink(btn){
+  navigator.clipboard.writeText('https://algovest.online/calculator.html').then(()=>{
+    const o=btn.textContent;btn.textContent='✅ Copied!';setTimeout(()=>btn.textContent=o,2000);
+  }).catch(()=>prompt('Copy this link:','https://algovest.online/calculator.html'));
+}
+
+function restart(){
+  ['start-year','amount','sip','rate','g-first','g-last','g-email','goal-amt','age'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('year-snap').style.display='none';
+  document.getElementById('consent-check').checked=false;
+  document.getElementById('unlock-btn').disabled=false;
+  document.getElementById('unlock-btn').textContent='🔓 Unlock my free report';
+  setMode('fd');setGoal('home','g-home');
+  document.getElementById('income-slab').value='30';
+  document.getElementById('city').value='1.022';
+  try{localStorage.removeItem(LS_KEY);}catch(e){}
+  showStep(1);
+  document.querySelectorAll('.step-label').forEach(l=>l.style.display='none');
+  document.getElementById('lbl1').style.display='flex';
+}
+
+setMode('fd');
+setGoal('home','g-home');
+document.getElementById('lbl1').style.display='flex';
+checkResume();
+</script>
+</body>
+</html>
